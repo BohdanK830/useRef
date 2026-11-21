@@ -64,13 +64,20 @@ export function App() {
     // Імутабельне додавання в стан: копіюємо старі таски і додаємо нову на початок
     setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
+  const handleToggleTask = (id: number | string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
 
   return (
     <main className="app-container">
       <Header />
       <TaskForm onAddTask={handleAddTask} />
       <Counter total={total} completed={completed} />
-      <TodoList tasks={tasks} />
+      <TodoList tasks={tasks} onToggleTask={handleToggleTask} />
     </main>
   );
 }

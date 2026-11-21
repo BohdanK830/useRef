@@ -1,6 +1,7 @@
 // src/components/TaskForm.tsx
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import type { Priority } from "../types";
+import styles from './TaskForm.module.css';
 
 interface TaskFormProps {
   onAddTask: (task: { text: string; priority: Priority; date: string }) => void;
@@ -50,12 +51,12 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
   };
 
   return (
-    <form className="task-form" onSubmit={handleSubmit}>
-      <div className="task-form__input-group">
+    <form className={styles['task-form']} onSubmit={handleSubmit}>
+      <div className={styles['task-form__input-group']}>
         <input
           ref={inputRef}
           type="text"
-          className="task-form__input"
+          className={styles['task-form__input']}
           placeholder="Що потрібно зробити?"
           value={text}
           onChange={(e) => {
@@ -78,14 +79,14 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
         )}
       </div>
 
-      <div className="task-form__controls">
-        <div className="task-form__group">
-          <label className="task-form__label" htmlFor="priority-select">
+      <div className={styles['task-form__controls']}>
+        <div className={styles['task-form__group']}>
+          <label className={styles['task-form__label']} htmlFor="priority-select">
             Пріоритет:
           </label>
           <select
             id="priority-select"
-            className="task-form__select"
+            className={styles['task-form__select']}
             value={priority}
             onChange={(e) => setPriority(e.target.value as Priority)}
           >
@@ -95,14 +96,14 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
           </select>
         </div>
 
-        <div className="task-form__group">
-          <label className="task-form__label" htmlFor="deadline-input">
+        <div className={styles['task-form__group']}>
+          <label className={styles['task-form__label']} htmlFor="deadline-input">
             Дедлайн:
           </label>
           <input
             id="deadline-input"
             type="date"
-            className="task-form__date"
+            className={styles['task-form__date']}
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
@@ -110,10 +111,10 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
 
         <button
           type="submit"
-          className="task-form__submit-btn"
+          className={styles['task-form__submit-btn']}
           disabled={text.trim().length === 0}
         >
-          <span className="task-form__btn-icon">＋</span>
+          <span className={styles['task-form__btn-icon']}>＋</span>
           <span>Додати</span>
         </button>
       </div>

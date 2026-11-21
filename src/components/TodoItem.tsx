@@ -1,8 +1,10 @@
 // src/components/TodoItem.tsx
 import type { Task, Priority } from "../types";
+import styles from './TodoItem.module.css';
 
 interface TodoItemProps {
   task: Task;
+  onToggle: () => void;
 }
 
 const PRIORITY_LABELS: Record<Priority, string> = {
@@ -11,14 +13,15 @@ const PRIORITY_LABELS: Record<Priority, string> = {
   high: "Високий",
 };
 
-export function TodoItem({ task }: TodoItemProps) {
-  const isOverdue = Boolean(task.isOverdue && !task.completed);
+export function TodoItem({ task, onToggle }: TodoItemProps) {
+  const today = new Date().toISOString().split("T")[0];
+  const isOverdue = Boolean(task.date && task.date < today && !task.completed);
 
   const itemClasses = [
-    "todo-item",
-    `todo-item--${task.priority}`,
-    task.completed ? "todo-item--completed" : "",
-    isOverdue ? "todo-item--overdue" : "",
+    styles['todo-item'],
+    styles[`todo-item--${task.priority}`],
+    task.completed ? styles['todo-item--completed'] : "",
+    isOverdue ? styles['todo-item--overdue'] : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -26,33 +29,32 @@ export function TodoItem({ task }: TodoItemProps) {
   return (
     <li className={itemClasses}>
       <label
-        className="todo-item__checkbox-label"
+        className={styles['todo-item__checkbox-label']}
         title={task.completed ? "Виконано" : "Позначити як виконане"}
       >
         <input
           type="checkbox"
-          className="todo-item__checkbox"
+          className={styles['todo-item__checkbox']}
           defaultChecked={task.completed}
+          onChange={onToggle}
         />
       </label>
 
-      <div className="todo-item__content">
-        <p className="todo-item__text">{task.text}</p>
-        <div className="todo-item__meta">
+      <div className={styles['todo-item__content']}>
+        <p className={styles['todo-item__text']}>{task.text}</p>
+        <div className={styles['todo-item__meta']}>
           <span
-            className={`todo-item__badge todo-item__badge--${task.priority}`}
+            className={styles['todo-item__badge'] + " " + styles[`todo-item__badge--${task.priority}`]}
           >
             {PRIORITY_LABELS[task.priority]}
           </span>
           {task.date && (
             <span
-              className={`todo-item__date ${
-                isOverdue ? "todo-item__date--overdue" : ""
-              }`}
+              className={styles['todo-item__date'] + " " + (isOverdue ? styles['todo-item__date--overdue'] : "")}
             >
               📅 {task.date}
               {isOverdue && (
-                <span className="todo-item__overdue-alert">⚠️ Прострочено</span>
+                <span className={styles['todo-item__overdue-alert']}>⚠️ Прострочено</span>
               )}
             </span>
           )}
@@ -61,7 +63,7 @@ export function TodoItem({ task }: TodoItemProps) {
 
       <button
         type="button"
-        className="todo-item__delete-btn"
+        className={styles['todo-item__delete-btn']}
         title="Видалити завдання"
       >
         🗑️
