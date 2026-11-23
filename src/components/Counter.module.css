@@ -20,6 +20,8 @@
   justify-content: center;
   border: 1px solid var(--border-light);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
 .counter__card:hover {
@@ -100,4 +102,11 @@
   background: linear-gradient(90deg, #6366f1 0%, #10b981 100%);
   border-radius: 9999px;
   transition: width 0.3s ease;
+}
+
+.counter__card--selected {
+  border-color: #6366f1 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25), 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+  transform: translateY(-2px);
 }

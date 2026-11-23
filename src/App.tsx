@@ -1,27 +1,33 @@
 // src/App.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Header } from "./components/Header";
 import { TaskForm } from "./components/TaskForm";
 import { Counter } from "./components/Counter";
 import { TodoList } from "./components/TodoList";
-import type { Task, Priority } from "./types";
+import type { Task, Priority, FilterStatus } from "./types";
 
 // Початкові мокові дані (використовуються, якщо localStorage ще порожній)
 const DEFAULT_TASKS: Task[] = [
   {
     id: 1,
-    text: "Опанувати контрольовані та неконтрольовані елементи",
-    completed: false,
-    priority: "high",
-    date: "2026-11-14",
-    isOverdue: false,
+    text: "Опанувати декомпозицію компонентів у React",
+    completed: true,
+    priority: "normal",
+    date: "2026-11-12",
   },
   {
     id: 2,
-    text: "Навчитись використовувати хук useRef для DOM-фокусу",
-    completed: true,
-    priority: "normal",
+    text: "Вивчити роботу з хуками useState, useEffect та useRef",
+    completed: false,
+    priority: "high",
     date: "2026-11-13",
+  },
+  {
+    id: 3,
+    text: "Створити завершений додаток Task List із збереженням у LocalStorage",
+    completed: false,
+    priority: "low",
+    date: "2026-11-20",
   },
 ];
 
@@ -37,6 +43,8 @@ export function App() {
     }
   });
 
+  const [filter, setFilter] = useState<FilterStatus>("all");
+
   // 2. Автоматичне збереження в localStorage при будь-якій зміні tasks
   useEffect(() => {
     localStorage.setItem("tasks_pv511", JSON.stringify(tasks));
@@ -45,6 +53,11 @@ export function App() {
   // 3. Похідний стан (Derived State) — обчислюємо без додаткового useState!
   const total = tasks.length;
   const completed = tasks.filter((t) => t.completed).length;
+  const active = total - completed;
+
+  useEffect(() => {
+    document.title = `Завдань: ${total}, Виконано: ${completed}, В процесі: ${active}`;
+  }, [active]);
 
   // 4. Функція додавання нового завдання (передається в TaskForm)
   const handleAddTask = (taskData: {
@@ -72,12 +85,22 @@ export function App() {
     );
   };
 
+  const handleDeleteTask = (id: number | string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
+  const displayedTasks = useMemo(() => {
+    if (filter === "active") return tasks.filter((task) => !task.completed);
+    if (filter === "completed") return tasks.filter((task) => task.completed);
+    return tasks; // filter === "all"
+  }, [tasks, filter]);
+
   return (
     <main className="app-container">
       <Header />
       <TaskForm onAddTask={handleAddTask} />
-      <Counter total={total} completed={completed} />
-      <TodoList tasks={tasks} onToggleTask={handleToggleTask} />
+      <Counter total={total} completed={completed} currentFilter={filter} onFilterChange={setFilter} />
+      <TodoList tasks={displayedTasks} onToggleTask={handleToggleTask} onDeleteTask={handleDeleteTask} />
     </main>
   );
 }

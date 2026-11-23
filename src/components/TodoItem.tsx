@@ -4,7 +4,8 @@ import styles from './TodoItem.module.css';
 
 interface TodoItemProps {
   task: Task;
-  onToggle: () => void;
+  onToggleTask: (id: number | string) => void;
+  onDeleteTask?: (id: number | string) => void;
 }
 
 const PRIORITY_LABELS: Record<Priority, string> = {
@@ -13,9 +14,10 @@ const PRIORITY_LABELS: Record<Priority, string> = {
   high: "Високий",
 };
 
-export function TodoItem({ task, onToggle }: TodoItemProps) {
-  const today = new Date().toISOString().split("T")[0];
-  const isOverdue = Boolean(task.date && task.date < today && !task.completed);
+const today = new Date().toISOString().slice(0, 10); // Отримуємо поточну дату у форматі "YYYY-MM-DD"
+
+export function TodoItem({ task, onToggleTask, onDeleteTask }: TodoItemProps) {
+  const isOverdue = Boolean(task.isOverdue ?? (task.date && !task.completed && task.date < today));
 
   const itemClasses = [
     styles['todo-item'],
@@ -36,7 +38,7 @@ export function TodoItem({ task, onToggle }: TodoItemProps) {
           type="checkbox"
           className={styles['todo-item__checkbox']}
           defaultChecked={task.completed}
-          onChange={onToggle}
+          onChange={() => onToggleTask(task.id)}
         />
       </label>
 
@@ -65,6 +67,7 @@ export function TodoItem({ task, onToggle }: TodoItemProps) {
         type="button"
         className={styles['todo-item__delete-btn']}
         title="Видалити завдання"
+        onClick={() => onDeleteTask && onDeleteTask(task.id)}
       >
         🗑️
       </button>
